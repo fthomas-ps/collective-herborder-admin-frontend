@@ -102,45 +102,46 @@ export default function Login() {
 	}
 
 	return (
-			<Box sx={{width: {s: 1, sm: 600}}}>
-				<Typography variant="h3" gutterBottom>Kräuterbestellung 2025</Typography>
-				<form>
-					<Box sx={{ marginTop: 3, marginBottom: 3, padding: 2, border: "1px solid rgb(192,192,192)", borderRadius: 3, backgroundColor: "rgb(255,255,255)" }}>
-						<Typography variant="h4" gutterBottom>Login</Typography>
-						<Stack spacing={2}>
-							<StackItem>
-								<TextField
-										label="Benutzername"
-										variant="outlined"
-										sx={{width: 1}}
-										value={loginCredentials.username}
-										disabled={isProcessingLogin}
-										onChange={onChangeUsername} />
-							</StackItem>
-							<StackItem>
-								<FormControl variant="outlined" sx={{width: 1}}>
-									<InputLabel htmlFor="password-field">Passwort</InputLabel>
-								<OutlinedInput
-										id="password-field"
-										type={showPassword ? 'text' : 'password'}
-										label="Passwort"
-										onChange={onChangePassword}
-										endAdornment={
-											<InputAdornment position="end">
-												<IconButton onClick={togglePasswordVisibility} edge="end">
-													{showPassword ? <VisibilityOff/> : <Visibility/>}
-												</IconButton>
-											</InputAdornment>
-										}
-								/>
-								</FormControl>
-							</StackItem>
-							<StackItem>
-								<Button variant="contained" onClick={login}
-												disabled={isProcessingLogin}>Anmelden</Button>
-							</StackItem>
-						</Stack>
-					</Box>
+			<Box sx={{
+				width: {s: 1, sm: 600},
+				marginTop: 9,
+				marginLeft: 2,
+			}}>
+			<form>
+				<Typography variant="h4" gutterBottom>Login</Typography>
+				<Stack spacing={2}>
+					<StackItem>
+						<TextField
+								label="Benutzername"
+								variant="outlined"
+								sx={{width: 1}}
+								value={loginCredentials.username}
+								disabled={isProcessingLogin}
+								onChange={onChangeUsername}/>
+					</StackItem>
+					<StackItem>
+						<FormControl variant="outlined" sx={{width: 1}}>
+							<InputLabel htmlFor="password-field">Passwort</InputLabel>
+							<OutlinedInput
+									id="password-field"
+									type={showPassword ? 'text' : 'password'}
+									label="Passwort"
+									onChange={onChangePassword}
+									endAdornment={
+										<InputAdornment position="end">
+											<IconButton onClick={togglePasswordVisibility} edge="end">
+												{showPassword ? <VisibilityOff/> : <Visibility/>}
+											</IconButton>
+										</InputAdornment>
+									}
+							/>
+						</FormControl>
+					</StackItem>
+					<StackItem>
+						<Button variant="contained" onClick={login}
+										disabled={isProcessingLogin}>Anmelden</Button>
+					</StackItem>
+				</Stack>
 
 					{message}
 				</form>

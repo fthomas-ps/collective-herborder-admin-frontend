@@ -331,10 +331,11 @@ export default function HerbForm() {
 
 	if (order === null) {
 		return (
-				<Box sx={{width: {s: 1, sm: 600}}}>
-					<Typography variant="h3" gutterBottom>Kräuterbestellung
-						2025</Typography>
-					{
+				<Box sx={{
+					width: {s: 1, sm: 600},
+					marginTop: 9,
+					marginLeft: 2,
+				}}>{
 						isLoading ?
 								<LinearProgress/>
 								: <Box>Die angegebene Kräuterbestellung wurde nicht gefunden!</Box>
@@ -344,10 +345,21 @@ export default function HerbForm() {
 	}
 
 	return (
-			<Box sx={{width: {s: 1, sm: 600}}}>
-				<Typography variant="h3" gutterBottom>Kräuterbestellung 2025</Typography>
+			<Box sx={{
+				width: {s: 1, sm: 600},
+				marginTop: 9,
+				marginLeft: 2,
+			}}>
 				<form>
-					<Box sx={{ marginTop: 3, marginBottom: 3, padding: 2, border: "1px solid rgb(192,192,192)", borderRadius: 3, backgroundColor: "rgb(255,255,255)" }}>
+					<Box
+							sx={{
+								marginTop: 3,
+								marginBottom: 3,
+								padding: 2,
+								border: "1px solid rgb(192,192,192)",
+								borderRadius: 1,
+								backgroundColor: "rgb(255,255,255)" }}
+					>
 						<Typography variant="h4" gutterBottom>Persönliche Informationen</Typography>
 						<Stack spacing={2}>
 							<StackItem>
@@ -379,7 +391,15 @@ export default function HerbForm() {
 							</StackItem>
 						</Stack>
 					</Box>
-					<Box sx={{ marginTop: 3, marginBottom: 3, padding: 2, border: "1px solid rgb(192,192,192)", borderRadius: 3, backgroundColor: "rgb(255,255,255)" }}>
+					<Box
+							sx={{
+								marginTop: 3,
+								marginBottom: 3,
+								padding: 2,
+								border: "1px solid rgb(192,192,192)",
+								borderRadius: 1,
+								backgroundColor: "rgb(255,255,255)" }}
+					>
 						<Typography variant="h4" gutterBottom>Kräuter</Typography>
 						<Stack>
 							{

@@ -1,9 +1,8 @@
 import {useState} from 'react';
 import {useEffect} from 'react';
 import {Navigate} from "react-router-dom";
-import { CookiesProvider, useCookies } from 'react-cookie';
+import { useCookies } from 'react-cookie';
 import humps from 'humps';
-import {styled} from '@mui/system';
 import Box from '@mui/system/Box';
 import Typography from '@mui/material/Typography';
 import List from '@mui/material/List';
@@ -79,24 +78,22 @@ export default function OrdersOverview() {
 
   if (isLoading) {
     return (
-        <Box sx={{width: {s: 1, sm: 600}}}>
-          <Typography variant="h3" gutterBottom>Kräuterbestellung
-            2025</Typography>
+        <Box sx={{
+          width: {s: 1, sm: 600},
+          marginTop: 9,
+          marginLeft: 2,
+        }}>
           <LinearProgress/>
         </Box>
     );
   }
 
   return (
-      <Box sx={{width: {s: 1, sm: 600}}}>
-        <Typography variant="h3" gutterBottom>Kräuterbestellung 2025</Typography>
+
         <Box sx={{
-          marginTop: 3,
-          marginBottom: 3,
-          padding: 2,
-          border: "1px solid rgb(192,192,192)",
-          borderRadius: 3,
-          backgroundColor: "rgb(255,255,255)"
+          width: {s: 1, sm: 600},
+          marginTop: 9,
+          marginLeft: 2,
         }}>
           <Typography variant="h4" gutterBottom>Bestellungen</Typography>
           <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
@@ -112,6 +109,5 @@ export default function OrdersOverview() {
           </List>
           {placeholder}
         </Box>
-      </Box>
   );
 }
