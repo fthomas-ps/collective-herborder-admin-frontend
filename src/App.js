@@ -15,6 +15,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
+import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import UnderConstruction from "./underConstruction";
@@ -26,15 +27,15 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import ViewListIcon from '@mui/icons-material/ViewList';
 import ReceiptIcon from '@mui/icons-material/Receipt';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
+import LogoutIcon from '@mui/icons-material/Logout';
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
-import ListItemButton from "@mui/material/ListItemButton";
 
 export default function App() {
 
-	const [cookies, setCookies] = useCookies(['herbauth']);
+	const [cookies, setCookies, removeCookies] = useCookies(['herbauth']);
 	const [drawerOpen, setDrawerOpen] = useState(false);
 
 	function toggleDrawer(desiredState) {
@@ -43,6 +44,10 @@ export default function App() {
 
 	function toggleDrawer() {
 		setDrawerOpen(!drawerOpen);
+	}
+
+	function logout() {
+		removeCookies('herbauth');
 	}
 
 	return (
@@ -56,14 +61,23 @@ export default function App() {
 						color="inherit"
 						sx={{
 							marginRight: 2,
-							display: { xs: 'inline-flex', sm: 'none'}}}
+							display: {xs: 'inline-flex', sm: 'none'}
+						}}
 						onClick={() => toggleDrawer()}
 				>
-					<MenuIcon />
+					<MenuIcon/>
 				</IconButton>
 				<Typography variant="h6" component="div" sx={{flexGrow: 1}}>
 					Kräuterbestellung 2025
 				</Typography>
+				{
+					cookies.herbauth !== undefined ?
+							<IconButton color="inherit" onClick={logout}>
+								<LogoutIcon/>
+							</IconButton>
+							: <></>
+
+				}
 			</Toolbar>
 		</AppBar>
 
@@ -96,7 +110,7 @@ export default function App() {
 											}}
 											role="presentation"
 											onClick={() => toggleDrawer(false)}>
-										<MenuItems/>
+										<MenuItems logout={{test: "hello"}}/>
 									</Box>
 								</Drawer>
 							</>
@@ -117,44 +131,53 @@ export default function App() {
 	</Box>
 	)
 
+	function MenuItems() {
+		return (
+				<List>
+					<ListItem>
+						<ListItemButton href="/admin/orders">
+							<ListItemIcon sx={{ minWidth: '42px' }}>
+								<ShoppingCartIcon/>
+							</ListItemIcon>
+							<ListItemText primary="Bestellungen"/>
+						</ListItemButton>
+					</ListItem>
+					<ListItem>
+						<ListItemButton href="/admin/collective_order">
+							<ListItemIcon sx={{ minWidth: '42px' }}>
+								<ViewListIcon/>
+							</ListItemIcon>
+							<ListItemText primary="Sammelbestellung"/>
+						</ListItemButton>
+					</ListItem>
+					<ListItem>
+						<ListItemButton href="/admin/bill">
+							<ListItemIcon sx={{ minWidth: '42px' }}>
+								<ReceiptIcon/>
+							</ListItemIcon>
+							<ListItemText primary="Rechnung"/>
+						</ListItemButton>
+					</ListItem>
+					<ListItem>
+						<ListItemButton href="/admin/shipments">
+							<ListItemIcon sx={{ minWidth: '42px' }}>
+								<LocalShippingIcon/>
+							</ListItemIcon>
+							<ListItemText primary="Lieferungen"/>
+						</ListItemButton>
+					</ListItem>
+					<ListItem>
+						<ListItemButton onClick={logout}>
+							<ListItemIcon sx={{ minWidth: '42px' }}>
+								<LogoutIcon/>
+							</ListItemIcon>
+							<ListItemText primary="Abmelden"/>
+						</ListItemButton>
+					</ListItem>
+				</List>
+		)
+
+	}
+
 }
 
-function MenuItems() {
-	return (
-			<List>
-				<ListItem>
-					<ListItemButton href="/admin/orders">
-						<ListItemIcon sx={{ minWidth: '42px' }}>
-							<ShoppingCartIcon/>
-						</ListItemIcon>
-						<ListItemText primary="Bestellungen"/>
-					</ListItemButton>
-				</ListItem>
-				<ListItem>
-					<ListItemButton href="/admin/collective_order">
-						<ListItemIcon sx={{ minWidth: '42px' }}>
-							<ViewListIcon/>
-						</ListItemIcon>
-						<ListItemText primary="Sammelbestellung"/>
-					</ListItemButton>
-				</ListItem>
-				<ListItem>
-					<ListItemButton href="/admin/bill">
-						<ListItemIcon sx={{ minWidth: '42px' }}>
-							<ReceiptIcon/>
-						</ListItemIcon>
-						<ListItemText primary="Rechnung"/>
-					</ListItemButton>
-				</ListItem>
-				<ListItem>
-					<ListItemButton href="/admin/shipments">
-						<ListItemIcon sx={{ minWidth: '42px' }}>
-							<LocalShippingIcon/>
-						</ListItemIcon>
-						<ListItemText primary="Lieferungen"/>
-					</ListItemButton>
-				</ListItem>
-			</List>
-	)
-
-}
