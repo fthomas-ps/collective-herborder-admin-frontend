@@ -22,6 +22,7 @@ import UnderConstruction from "./underConstruction";
 import CollectiveOrder from "./collectiveOrder";
 import OrdersOverview from "./ordersOverview";
 import OrderUpdate from "./orderUpdate";
+import Bill from "./bill";
 import Login from "./login";
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import ViewListIcon from '@mui/icons-material/ViewList';
@@ -123,6 +124,7 @@ export default function App() {
 				<Route path="/" element={<UnderConstruction />}/>
 				<Route path="/admin" element={<Login />}/>
 				<Route path="/admin/orders" element={<OrdersOverview />}/>
+				<Route path="/admin/bill" element={<Bill />}/>
 				<Route path="/admin/orders/:orderId" element={<OrderUpdate />}/>
 				<Route path="/admin/collective_order" element={<CollectiveOrder />}/>
 			</Routes>
@@ -155,7 +157,7 @@ export default function App() {
 							<ListItemIcon sx={{ minWidth: '42px' }}>
 								<ReceiptIcon/>
 							</ListItemIcon>
-							<ListItemText primary="Rechnung"/>
+							<ListItemText primary="Sammelrechnung"/>
 						</ListItemButton>
 					</ListItem>
 					<ListItem>

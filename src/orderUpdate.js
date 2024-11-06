@@ -230,7 +230,7 @@ export default function HerbForm() {
 		if (orderId === undefined) {
 			saveNewOrder(orderForBackend);
 		} else {
-			updateExistingOrder(orderForBackend)
+			updateExistingOrder(orderForBackend);
 		}
 	}
 
@@ -305,7 +305,7 @@ export default function HerbForm() {
 		order.herbs
 			.filter(herb => herb.key.toString() === event.target.name)
 			.forEach(herb => herb.quantity = event.target.value);
-		setOrder({...order})
+		setOrder({...order});
 	}
 
 	function onChangeFirstName(event) {
