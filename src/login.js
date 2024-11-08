@@ -103,7 +103,7 @@ export default function Login() {
 
 	return (
 			<Box sx={{
-				width: {s: 1, sm: 600},
+				width: {xs: 1, sm: 600},
 				marginTop: 9,
 				marginLeft: 2,
 			}}>

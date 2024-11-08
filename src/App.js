@@ -56,18 +56,22 @@ export default function App() {
 		<CssBaseline />
 		<AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }} color="primary">
 			<Toolbar>
-				<IconButton
-						size="large"
-						edge="start"
-						color="inherit"
-						sx={{
-							marginRight: 2,
-							display: {xs: 'inline-flex', sm: 'none'}
-						}}
-						onClick={() => toggleDrawer()}
-				>
-					<MenuIcon/>
-				</IconButton>
+				{
+					cookies.herbauth !== undefined ? (
+							<IconButton
+									size="large"
+									edge="start"
+									color="inherit"
+									sx={{
+										marginRight: 2,
+										display: {xs: 'inline-flex', sm: 'none'}
+									}}
+									onClick={() => toggleDrawer()}
+							>
+								<MenuIcon/>
+							</IconButton>
+							) : <></>
+				}
 				<Typography variant="h6" component="div" sx={{flexGrow: 1}}>
 					Kräuterbestellung 2025
 				</Typography>
@@ -117,7 +121,6 @@ export default function App() {
 							</>
 					) : <></>
 		}
-
 
 	<Router>
 			<Routes>
