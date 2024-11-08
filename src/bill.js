@@ -109,6 +109,7 @@ export default function BillForm() {
 			data.date = dayjs(data.date);
 			return data;
 		})
+		.then(data => calculatePrices(data))
 		.then(data => convertHerbPricesToUI(data))
 		.then(data => addHerbKeys(data))
 		.then(data => addEmptyEntriesIfRequired(data))
@@ -120,8 +121,29 @@ export default function BillForm() {
 		});
 	}
 
+	function calculatePrices(bill) {
+		bill.herbs.forEach((herb, index) => {
+			let price = herb.unitPrice * herb.quantity;
+			herb.price = (price / 100).toFixed(2);
+		});
+		updateTotalPrices(bill);
+		return bill;
+	}
+
+	function updateTotalPrices(bill) {
+		let totalPrice = 0;
+		bill.herbs.forEach((herb, index) => {
+			totalPrice += Number(herb.price);
+		});
+		bill.totalPriceWithoutVat = totalPrice.toFixed(2);
+		bill.totalPriceWithVat = (totalPrice * ((bill.vat/100) + 1)).toFixed(2);
+		return bill;
+	}
+
 	function convertHerbPricesToUI(bill) {
-		bill.herbs.map((herb, index) => herb.unitPrice = (herb.unitPrice/100).toFixed(2));
+		bill.herbs.forEach((herb, index) =>
+				herb.unitPrice = (herb.unitPrice/100).toFixed(2)
+		);
 		return bill;
 	}
 
@@ -157,13 +179,14 @@ export default function BillForm() {
 	}
 
 	function cleanupBillForBackend(bill) {
-		console.log("Bill: ", bill);
-		const billForBackend = {...bill};
+		const {totalPriceWithoutVat, ...billForBackendWithVatPrice} = bill;
+		const {totalPriceWithVat, ...billForBackend} = billForBackendWithVatPrice;
 		billForBackend.date = billForBackend.date.format('YYYY-MM-DD');
 		billForBackend.herbs = billForBackend.herbs
 		.map(herb => {
-			const {key, ...newHerb} = herb;
-			newHerb.unitPrice = newHerb.unitPrice*100;
+			const {key, ...newHerbWithPrice} = herb;
+			const {price, ...newHerb} = newHerbWithPrice;
+			newHerb.unitPrice = newHerb.unitPrice * 100;
 			return newHerb;
 		});
 		return billForBackend;
@@ -171,8 +194,7 @@ export default function BillForm() {
 
 	function saveHerb() {
 		const decimalPattern = /^\d*\.?\d+$/;
-		const invalidPrices = bill.herbs.filter(herb => {console.log("HerbPrice", herb.unitPrice,typeof(herb.unitPrice), decimalPattern.test(herb.unitPrice));return herb.unitPrice === null || !decimalPattern.test(herb.unitPrice);});
-		console.log("Invalid prices", invalidPrices);
+		const invalidPrices = bill.herbs.filter(herb => herb.unitPrice === null || !decimalPattern.test(herb.unitPrice));
 		if (invalidPrices.length > 0) {
 			setMessage('Bitte kontrolliere die Preise! Mindestens ein Preis fehlt oder hat hat ein invalides Format.');
 			return;
@@ -192,7 +214,6 @@ export default function BillForm() {
 		}
 		const invalidHerbEntries = billForBackend.herbs
 			.filter(herb => herb.herbId < 0 || herb.unitPrice === null || herb.quantity === null || isEmpty(herb.quantity) || herb.quantity <= 0);
-		console.log("invalidHerbEntries", invalidHerbEntries);
 		if (invalidHerbEntries.length > 0) {
 			setMessage('Bitte kontrolliere die Kräuter. In einzelnen Zeilen fehlen Kräuternamen, Preise oder die Anzahl!');
 			return;
@@ -201,8 +222,6 @@ export default function BillForm() {
 				billForBackend.herbs,
 				herb => herb.herbId
 		);
-
-	console.log("Saving Bill", billForBackend);
 
 		setSaveInProcess(true);
 		setMessage(<LinearProgress />);
@@ -251,23 +270,28 @@ export default function BillForm() {
 			.filter(h => h.key === herbKey)
 			.forEach(h => h.herbId = herb.id);
 		setBill({...bill});
-		console.log("Bill", bill);
 	}
 	
 	function onChangeQuantity(event) {
 		bill.herbs
 			.filter(herb => herb.key.toString() === event.target.name)
-			.forEach(herb => herb.quantity = event.target.value);
+			.forEach(herb => {
+				herb.quantity = event.target.value;
+				herb.price = herb.unitPrice * herb.quantity;
+			});
+		updateTotalPrices(bill);
 		setBill({...bill});
 	}
 
 	function onChangePrice(event) {
-		console.log("Price changed", event.target.name, event.target.value);
 		bill.herbs
 			.filter(herb => herb.key.toString() === event.target.name )
-			.forEach(herb => herb.unitPrice = event.target.value);
+			.forEach(herb => {
+				herb.unitPrice = event.target.value;
+				herb.price = herb.unitPrice * herb.quantity;
+			});
+		updateTotalPrices(bill);
 		setBill({...bill});
-		console.log("Bill", bill);
 	}
 
 	function onChangeDate(newDate) {
@@ -277,6 +301,7 @@ export default function BillForm() {
 
 	function onChangeVat(event) {
 		bill['vat'] = event.target.value;
+		updateTotalPrices(bill);
 		setBill({...bill});
 	}
 
@@ -300,8 +325,6 @@ export default function BillForm() {
 				</Box>
 		);
 	}
-
-	console.log("Loaded Bill", bill);
 
 	return (
 			<Box sx={{
@@ -365,7 +388,7 @@ export default function BillForm() {
 								bill.herbs.map((herb, index) => (
 										<StackItem key={herb.key}>
 											<Grid container>
-												<Grid size={{ xs: 12, sm: 5 }}>
+												<Grid size={{ xs: 12, sm: 4 }}>
 													<Item>
 														<Autocomplete
 																disablePortal
@@ -378,12 +401,12 @@ export default function BillForm() {
 														/>
 													</Item>
 												</Grid>
-												<Grid size={{ xs: 5, sm: 3 }}>
+												<Grid size={{ xs: 4, sm: 2 }}>
 													<Item>
 														<FormControl fullWidth>
-															<InputLabel htmlFor="price-input">Einzelpreis</InputLabel>
+															<InputLabel htmlFor="unit-price-input">Einzelpreis</InputLabel>
 															<OutlinedInput
-																id="price-input"
+																id="unit-price-input"
 																endAdornment={<InputAdornment position="end">€</InputAdornment>}
 																label="Einzelpreis"
 																sx={{ width: 1}}
@@ -395,7 +418,7 @@ export default function BillForm() {
 														</FormControl>
 													</Item>
 												</Grid>
-												<Grid size={{ xs: 5, sm: 3 }}>
+												<Grid size={{ xs: 2, sm: 2 }}>
 													<Item>
 														<TextField
 																label="Anzahl"
@@ -406,6 +429,22 @@ export default function BillForm() {
 																disabled={saveInProcess}
 																value={herb.quantity}
 																onChange={onChangeQuantity} />
+													</Item>
+												</Grid>
+												<Grid size={{ xs: 4, sm: 2 }}>
+													<Item>
+														<FormControl fullWidth>
+															<InputLabel htmlFor="price-input">Preis</InputLabel>
+															<OutlinedInput
+																	id="price-input"
+																	endAdornment={<InputAdornment position="end">€</InputAdornment>}
+																	label="Preis"
+																	sx={{ width: 1 }}
+																	name={herb.key.toString()}
+																	disabled={true}
+																	value={herb.price}
+															/>
+														</FormControl>
 													</Item>
 												</Grid>
 												<Grid size={{ xs: 2, sm: 1 }}>
@@ -423,6 +462,52 @@ export default function BillForm() {
 								<Button variant="contained" onClick={addHerb}
 												disabled={saveInProcess}
 												startIcon={<AddIcon/>}>Hinzufügen</Button>
+							</StackItem>
+						</Stack>
+					</Box>
+					<Box
+							sx={{
+								marginTop: 3,
+								marginBottom: 3,
+								padding: 2,
+								border: "1px solid rgb(192,192,192)",
+								borderRadius: 1,
+								backgroundColor: "rgb(255,255,255)" }}
+					>
+						<Stack sx={{ textAlign: 'right' }}>
+							<StackItem>
+								<Grid container spacing={0}>
+									<Grid size={6}>
+									</Grid>
+									<Grid size={3}>
+										<Item>Zwischensumme:</Item>
+									</Grid>
+									<Grid size={3}>
+										<Item sx={{ textAlign: 'right' }}>{bill.totalPriceWithoutVat} €</Item>
+									</Grid>
+									<Grid size={6}>
+									</Grid>
+									<Grid size={3}>
+										<Item>Mehrwertsteuer:</Item>
+									</Grid>
+									<Grid size={3}>
+										<Item sx={{textAlign: 'right'}}>
+											{(bill.totalPriceWithoutVat * (bill.vat / 100)).toFixed(2)} €
+										</Item>
+									</Grid>
+									<Grid size={6}>
+									</Grid>
+									<Grid size={3}>
+										<Item><Typography variant="h6" gutterBottom>Summe:</Typography></Item>
+									</Grid>
+									<Grid size={3}>
+										<Item sx={{ textAlign: 'right' }}>
+											<Typography variant="h6" gutterBottom>
+												{bill.totalPriceWithVat} €
+											</Typography>
+										</Item>
+									</Grid>
+								</Grid>
 							</StackItem>
 						</Stack>
 					</Box>
