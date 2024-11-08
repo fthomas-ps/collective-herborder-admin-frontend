@@ -277,7 +277,7 @@ export default function BillForm() {
 			.filter(herb => herb.key.toString() === event.target.name)
 			.forEach(herb => {
 				herb.quantity = event.target.value;
-				herb.price = herb.unitPrice * herb.quantity;
+				herb.price = (herb.unitPrice * herb.quantity).toFixed(2);
 			});
 		updateTotalPrices(bill);
 		setBill({...bill});
@@ -288,7 +288,7 @@ export default function BillForm() {
 			.filter(herb => herb.key.toString() === event.target.name )
 			.forEach(herb => {
 				herb.unitPrice = event.target.value;
-				herb.price = herb.unitPrice * herb.quantity;
+				herb.price = (herb.unitPrice * herb.quantity).toFixed(2);
 			});
 		updateTotalPrices(bill);
 		setBill({...bill});
@@ -314,7 +314,7 @@ export default function BillForm() {
 	if (bill === null) {
 		return (
 				<Box sx={{
-					width: {s: 1, sm: 600},
+					width: {s: 1, sm: 800},
 					marginTop: 9,
 					marginLeft: 2,
 				}}>{
@@ -328,7 +328,7 @@ export default function BillForm() {
 
 	return (
 			<Box sx={{
-				width: {s: 1, sm: 600},
+				width: {s: 1, sm: 800},
 				marginTop: 9,
 				marginLeft: 2,
 			}}>

@@ -19,10 +19,12 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import UnderConstruction from "./underConstruction";
+import OrderUpdate from "./orderUpdate";
 import CollectiveOrder from "./collectiveOrder";
 import OrdersOverview from "./ordersOverview";
-import OrderUpdate from "./orderUpdate";
 import Bill from "./bill";
+import ShipmentsOverview from "./shipmentsOverview";
+import ShipmentUpdate from "./shipmentUpdate";
 import Login from "./login";
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import ViewListIcon from '@mui/icons-material/ViewList';
@@ -124,12 +126,15 @@ export default function App() {
 
 	<Router>
 			<Routes>
-				<Route path="/" element={<UnderConstruction />}/>
-				<Route path="/admin" element={<Login />}/>
-				<Route path="/admin/orders" element={<OrdersOverview />}/>
-				<Route path="/admin/bill" element={<Bill />}/>
-				<Route path="/admin/orders/:orderId" element={<OrderUpdate />}/>
-				<Route path="/admin/collective_order" element={<CollectiveOrder />}/>
+				<Route path="/" element={<UnderConstruction/>}/>
+				<Route path="/admin" element={<Login/>}/>
+				<Route path="/admin/orders" element={<OrdersOverview/>}/>
+				<Route path="/admin/bill" element={<Bill/>}/>
+				<Route path="/admin/shipments" element={<ShipmentsOverview/>}/>
+				<Route path="/admin/shipments/new" element={<ShipmentUpdate/>}/>
+				<Route path="/admin/shipments/:shipmentId" element={<ShipmentUpdate/>}/>
+				<Route path="/admin/orders/:orderId" element={<OrderUpdate/>}/>
+				<Route path="/admin/collective_order" element={<CollectiveOrder/>}/>
 			</Routes>
 		</Router>
 
