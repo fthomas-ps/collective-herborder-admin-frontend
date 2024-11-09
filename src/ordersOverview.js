@@ -95,7 +95,7 @@ export default function OrdersOverview() {
           marginTop: 9,
           marginLeft: 2,
         }}>
-          <Typography variant="h4" gutterBottom>Bestellungen</Typography>
+          <Typography variant="h4" gutterBottom>Einzelbestellungen</Typography>
           <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
             {
               orders.map((order) => (

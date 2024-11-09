@@ -19,8 +19,8 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import UnderConstruction from "./underConstruction";
+import Overview from "./overview";
 import OrderUpdate from "./orderUpdate";
-import CollectiveOrder from "./collectiveOrder";
 import OrdersOverview from "./ordersOverview";
 import Bill from "./bill";
 import ShipmentsOverview from "./shipmentsOverview";
@@ -128,13 +128,13 @@ export default function App() {
 			<Routes>
 				<Route path="/" element={<UnderConstruction/>}/>
 				<Route path="/admin" element={<Login/>}/>
+				<Route path="/admin/overview" element={<Overview/>}/>
 				<Route path="/admin/orders" element={<OrdersOverview/>}/>
 				<Route path="/admin/bill" element={<Bill/>}/>
 				<Route path="/admin/shipments" element={<ShipmentsOverview/>}/>
 				<Route path="/admin/shipments/new" element={<ShipmentUpdate/>}/>
 				<Route path="/admin/shipments/:shipmentId" element={<ShipmentUpdate/>}/>
 				<Route path="/admin/orders/:orderId" element={<OrderUpdate/>}/>
-				<Route path="/admin/collective_order" element={<CollectiveOrder/>}/>
 			</Routes>
 		</Router>
 
@@ -145,19 +145,19 @@ export default function App() {
 		return (
 				<List>
 					<ListItem>
+						<ListItemButton href="/admin/overview">
+							<ListItemIcon sx={{ minWidth: '42px' }}>
+								<ViewListIcon/>
+							</ListItemIcon>
+							<ListItemText primary="Übersicht"/>
+						</ListItemButton>
+					</ListItem>
+					<ListItem>
 						<ListItemButton href="/admin/orders">
 							<ListItemIcon sx={{ minWidth: '42px' }}>
 								<ShoppingCartIcon/>
 							</ListItemIcon>
-							<ListItemText primary="Bestellungen"/>
-						</ListItemButton>
-					</ListItem>
-					<ListItem>
-						<ListItemButton href="/admin/collective_order">
-							<ListItemIcon sx={{ minWidth: '42px' }}>
-								<ViewListIcon/>
-							</ListItemIcon>
-							<ListItemText primary="Sammelbestellung"/>
+							<ListItemText primary="Einzelbestellungen"/>
 						</ListItemButton>
 					</ListItem>
 					<ListItem>
