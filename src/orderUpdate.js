@@ -109,7 +109,7 @@ export default function HerbForm() {
 
 	const [availableHerbs, setAvailableHerbs] = useState([]);
 
-	const [message, setMessage] = useState(null);
+	const [placeholder, setPlaceholder] = useState(null);
 
 	useEffect(() => initializeHerbOrder(), []);
 
@@ -128,9 +128,12 @@ export default function HerbForm() {
 	function fetchOrder() {
 		const requestOptions = {
 			method: 'GET',
-			headers: {Accept: 'application/json,application/problem+json'}
+			headers: {
+				Accept: 'application/json,application/problem+json',
+				Authorization: 'Basic ' + cookies.herbauth
+			}
 		}
-		return fetch(process.env.REACT_APP_BACKEND_URL + '/api/orders/' + orderId,
+		return fetch(process.env.REACT_APP_BACKEND_URL + '/api/admin/orders/' + orderId,
 				requestOptions)
 		.then(response => {
 			if (response.status === 404) {
@@ -192,25 +195,25 @@ export default function HerbForm() {
 	function saveHerb() {
 		const orderForBackend = cleanupOrderForBackend();
 		if (isEmpty(order.firstName)) {
-			setMessage('Bitte gib den Vornamen ein!');
+			setPlaceholder('Bitte gib den Vornamen ein!');
 			return;
 		}
 		if (isEmpty(order.lastName)) {
-			setMessage('Bitte gib den Nachnamen ein!');
+			setPlaceholder('Bitte gib den Nachnamen ein!');
 			return;
 		}
 		if (isEmpty(order.mail)) {
-			setMessage('Bitte gib die E-Mail-Adresse ein!');
+			setPlaceholder('Bitte gib die E-Mail-Adresse ein!');
 			return;
 		}
 		if (orderForBackend.herbs.length === 0) {
-			setMessage('Bitte füge Kräuter hinzu!');
+			setPlaceholder('Bitte füge Kräuter hinzu!');
 			return;
 		}
 		const invalidHerbEntries = orderForBackend.herbs
 			.filter(herb => herb.herbId < 0 || herb.quantity == null || isEmpty(herb.quantity) || herb.quantity <= 0);
 		if (invalidHerbEntries.length > 0) {
-			setMessage('Bitte kontrolliere die Kräuter. In einzelnen Zeilen fehlen Kräuternamen oder die Anzahl!');
+			setPlaceholder('Bitte kontrolliere die Kräuter. In einzelnen Zeilen fehlen Kräuternamen oder die Anzahl!');
 			return;
 		}
 		const itemsGroupedByHerbs = Object.groupBy(
@@ -221,12 +224,12 @@ export default function HerbForm() {
 			.filter(key => itemsGroupedByHerbs[key].length > 1)
 			.length;
 		if (numberDuplicateEntries > 0) {
-			setMessage('Bitte entferne die doppelten Kräuter!');
+			setPlaceholder('Bitte entferne die doppelten Kräuter!');
 			return;
 		}
 
 		setSaveInProcess(true);
-		setMessage(<LinearProgress />);
+		setPlaceholder(<LinearProgress />);
 		if (orderId === undefined) {
 			saveNewOrder(orderForBackend);
 		} else {
@@ -240,7 +243,7 @@ export default function HerbForm() {
 			headers: {'Content-Type': 'application/json'},
 			body: JSON.stringify(humps.decamelizeKeys(orderForBackend))
 		};
-		fetch(process.env.REACT_APP_BACKEND_URL + '/api/orders', requestOptions)
+		fetch(process.env.REACT_APP_BACKEND_URL + '/api/admin/orders', requestOptions)
 		.then(response => {
 			if (response.status === 201) {
 				return response.json();
@@ -249,11 +252,11 @@ export default function HerbForm() {
 			}
 		})
 		.then(json => {
-			setMessage(<div><p>Die Bestellung wurde gespeichert!</p></div>);
+			setPlaceholder(<div><p>Die Bestellung wurde gespeichert!</p></div>);
 			setSaveInProcess(false);
 		})
 		.catch(error => {
-					setMessage(<p>Beim Abschicken der Bestellung ist ein Fehler
+					setPlaceholder(<p>Beim Abschicken der Bestellung ist ein Fehler
 						aufgetreten!</p>);
 					setSaveInProcess(false);
 				}
@@ -266,7 +269,7 @@ export default function HerbForm() {
 			headers: {'Content-Type': 'application/json', Accept: 'application/json,application/problem+json'},
 			body: JSON.stringify(humps.decamelizeKeys(orderForBackend))
 		};
-		fetch(process.env.REACT_APP_BACKEND_URL + '/api/orders/' + orderId,
+		fetch(process.env.REACT_APP_BACKEND_URL + '/api/admin/orders/' + orderId,
 				requestOptions)
 		.then(response => {
 			if (response.status === 200) {
@@ -277,10 +280,10 @@ export default function HerbForm() {
 		})
 		.then(json => {
 			setSaveInProcess(false);
-			setMessage(<div><p>Die Bestellung wurde aktualisiert!</p></div>);
+			setPlaceholder(<div><p>Die Bestellung wurde aktualisiert!</p></div>);
 		})
 		.catch(error => {
-			setMessage(<p>Beim Abschicken der Bestellung ist ein Fehler aufgetreten!</p>)
+			setPlaceholder(<p>Beim Abschicken der Bestellung ist ein Fehler aufgetreten!</p>)
 			setSaveInProcess(false);
 		});
 	}
@@ -428,7 +431,7 @@ export default function HerbForm() {
 						</Grid>
 					</Box>
 
-					{message}
+					{placeholder}
 				</form>
 			</Box>
 	);
