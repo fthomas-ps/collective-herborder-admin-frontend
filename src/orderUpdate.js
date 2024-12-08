@@ -17,6 +17,10 @@ import Typography from '@mui/material/Typography';
 import LinearProgress from '@mui/material/LinearProgress';
 import './styles.css';
 import {useCookies} from "react-cookie";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import OutlinedInput from "@mui/material/OutlinedInput";
+import InputAdornment from "@mui/material/InputAdornment";
 
 const Item = styled('div')(({ theme }) => ({
 	width: '100%',
@@ -45,45 +49,7 @@ const StackItem = styled('div')(({ theme }) => ({
 
 function Herb(herb, changeHerb, changeQuantity, availableHerbs, selectedHerbs, removeHerb,
 		orderSuccess) {
-	return (
-			<StackItem key={herb.key}>
-				<Grid container>
-					<Grid size={{ xs: 12, sm: 8 }}>
-						<Item>
-							<Autocomplete
-									disablePortal
-									options={availableHerbs?.filter(h => selectedHerbs.findIndex(sh => sh.herbId === h.id) < 0).map(h => h.name)}
-									renderInput={(params) => <TextField {...params}
-																											label="Kräuter"/>}
-									value={herb.herbId === -1 ? "" : availableHerbs.find(h => h.id === herb.herbId).name}
-									onChange={(event, newValue) => changeHerb(herb.key, newValue)}
-									disabled={orderSuccess}
-							/>
-						</Item>
-					</Grid>
-					<Grid size={{ xs: 10, sm: 3 }}>
-						<Item>
-							<TextField
-									label="Anzahl"
-									variant="outlined"
-									type="number"
-									sx={{ width: 1}}
-									name={herb.key.toString()}
-									disabled={orderSuccess}
-									value={herb.quantity}
-									onChange={changeQuantity} />
-						</Item>
-					</Grid>
-					<Grid size={{ xs: 2, sm: 1 }}>
-						<Item sx={{ display: "flex", alignItems: "center" }}>
-							<IconButton aria-label="delete" disabled={orderSuccess} onClick={() => removeHerb(herb.key)}>
-								<DeleteIcon />
-							</IconButton>
-						</Item>
-					</Grid>
-				</Grid>
-			</StackItem>
-	);
+
 }
 
 export default function HerbForm() {
@@ -96,11 +62,11 @@ export default function HerbForm() {
 		lastName: "",
 		mail: "",
 		herbs: [
-				{key: 0, herbId: -1, quantity: ''},
-				{key: 1, herbId: -1, quantity: ''},
-				{key: 2, herbId: -1, quantity: ''},
-				{key: 3, herbId: -1, quantity: ''},
-				{key: 4, herbId: -1, quantity: ''}
+		 		{key: 0, herbId: -1, quantity: '', packed_quantity: ''},
+				{key: 1, herbId: -1, quantity: '', packed_quantity: ''},
+				{key: 2, herbId: -1, quantity: '', packed_quantity: ''},
+				{key: 3, herbId: -1, quantity: '', packed_quantity: ''},
+				{key: 4, herbId: -1, quantity: '', packed_quantity: ''}
 		]} : null);
 
 	const [isLoading, setIsLoading] = useState(true);
@@ -145,7 +111,9 @@ export default function HerbForm() {
 			}
 		})
 		.then(data => humps.camelizeKeys(data))
+		.then(data => addDefaultPackedQuantityValues(data))
 		.then(data => addHerbKeys(data))
+		.then(data => convertPricesToUI(data))
 		.then(data => setOrder(data))
 		.then(() => setIsLoading(false))
 		.catch(error => {
@@ -154,8 +122,29 @@ export default function HerbForm() {
 		});
 	}
 
+	function addDefaultPackedQuantityValues(order) {
+		order.herbs
+			.filter(herb => herb.packedQuantity === null)
+			.forEach(herb => herb.packedQuantity = '');
+		return order;
+	}
+
 	function addHerbKeys(order) {
 		order.herbs.map((herb, index) => herb.key = index);
+		return order;
+	}
+
+	function convertPricesToUI(order) {
+		if (order.price === undefined) {
+			order.price = '';
+		} else {
+			order.price = (order.price / 100).toFixed(2);
+		}
+		if (order.paidAmount === undefined) {
+			order.paidAmount = '';
+		} else {
+			order.paidAmount = (order.paidAmount / 100).toFixed(2);
+		}
 		return order;
 	}
 
@@ -189,6 +178,7 @@ export default function HerbForm() {
 			const {key, ...newHerb} = herb;
 			return newHerb;
 		});
+		orderForBackend.paidAmount = orderForBackend.paidAmount * 100;
 		return orderForBackend;
 	}
 
@@ -266,7 +256,10 @@ export default function HerbForm() {
 	function updateExistingOrder(orderForBackend) {
 		const requestOptions = {
 			method: 'PUT',
-			headers: {'Content-Type': 'application/json', Accept: 'application/json,application/problem+json'},
+			headers: {
+				'Content-Type': 'application/json',
+				Accept: 'application/json,application/problem+json',
+				Authorization: 'Basic ' + cookies.herbauth},
 			body: JSON.stringify(humps.decamelizeKeys(orderForBackend))
 		};
 		fetch(process.env.REACT_APP_BACKEND_URL + '/api/admin/orders/' + orderId,
@@ -311,6 +304,13 @@ export default function HerbForm() {
 		setOrder({...order});
 	}
 
+	function onChangePackedQuantity(event) {
+		order.herbs
+			.filter(herb => herb.key.toString() === event.target.name)
+			.forEach(herb => herb.packedQuantity = event.target.value);
+		setOrder({...order});
+	}
+
 	function onChangeFirstName(event) {
 		order['firstName'] = event.target.value;
 		setOrder({...order});
@@ -323,6 +323,11 @@ export default function HerbForm() {
 
 	function onChangeMail(event) {
 		order['mail'] = event.target.value;
+		setOrder({...order});
+	}
+
+	function onChangePaidAmount(event) {
+		order.paidAmount = event.target.value;
 		setOrder({...order});
 	}
 
@@ -406,14 +411,100 @@ export default function HerbForm() {
 						<Typography variant="h4" gutterBottom>Kräuter</Typography>
 						<Stack>
 							{
-								order.herbs.map((element, index) => Herb(element,
-										onChangeHerb, onChangeQuantity, availableHerbs, order.herbs,
-										onRemoveHerb, saveInProcess))
+								order.herbs.map((herb, index) =>
+										<StackItem key={herb.key}>
+											<Grid container>
+												<Grid size={{xs: 12, sm: 7}}>
+													<Item>
+														<Autocomplete
+																disablePortal
+																options={availableHerbs?.filter(
+																		h => order.herbs.findIndex(
+																				sh => sh.herbId === h.id) < 0).map(
+																		h => h.name)}
+																renderInput={(params) => <TextField {...params}
+																																		label="Kräuter"/>}
+																value={herb.herbId === -1 ? ""
+																		: availableHerbs.find(
+																				h => h.id === herb.herbId).name}
+																onChange={(event, newValue) => onChangeHerb(
+																		herb.key, newValue)}
+																disabled={saveInProcess}
+														/>
+													</Item>
+												</Grid>
+												<Grid size={{xs: 5, sm: 2}}>
+													<Item>
+														<TextField
+																label="Anzahl"
+																variant="outlined"
+																type="number"
+																sx={{width: 1}}
+																name={herb.key.toString()}
+																disabled={saveInProcess}
+																value={herb.quantity}
+																onChange={onChangeQuantity}/>
+													</Item>
+												</Grid>
+												<Grid size={{xs: 5, sm: 2}}>
+													<Item>
+														<TextField
+																label="Gepackt"
+																variant="outlined"
+																type="number"
+																sx={{width: 1}}
+																name={herb.key.toString()}
+																disabled={saveInProcess}
+																value={herb.packedQuantity}
+																onChange={onChangePackedQuantity}/>
+													</Item>
+												</Grid>
+												<Grid size={{xs: 2, sm: 1}}>
+													<Item sx={{display: "flex", alignItems: "center"}}>
+														<IconButton aria-label="delete"
+																				disabled={saveInProcess}
+																				onClick={() => onRemoveHerb(herb.key)}>
+															<DeleteIcon/>
+														</IconButton>
+													</Item>
+												</Grid>
+											</Grid>
+										</StackItem>)
 							}
 							<StackItem sx={{ paddingTop: 1 }}>
 								<Button variant="contained" onClick={addHerb}
 												disabled={saveInProcess}
 												startIcon={<AddIcon/>}>Hinzufügen</Button>
+							</StackItem>
+						</Stack>
+					</Box>
+					<Box
+							sx={{
+								marginTop: 3,
+								marginBottom: 3,
+								padding: 2,
+								border: "1px solid rgb(192,192,192)",
+								borderRadius: 1,
+								backgroundColor: "rgb(255,255,255)" }}
+					>
+						<Typography variant="h4" gutterBottom>Bezahlung</Typography>
+						<Stack spacing={2}>
+							<StackItem>
+								Preis: {order.price} €
+							</StackItem>
+							<StackItem>
+								<FormControl fullWidth>
+									<InputLabel htmlFor="paid-amount-input">Bezahlt</InputLabel>
+									<OutlinedInput
+											id="paid-amount-input"
+											endAdornment={<InputAdornment position="end">€</InputAdornment>}
+											label="Einzelpreis"
+											sx={{ width: 1}}
+											disabled={saveInProcess}
+											value={order.paidAmount}
+											onChange={onChangePaidAmount}
+									/>
+								</FormControl>
 							</StackItem>
 						</Stack>
 					</Box>

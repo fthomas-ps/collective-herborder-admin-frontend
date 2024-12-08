@@ -80,6 +80,7 @@ export default function OrdersOverview() {
   function calculatePrices(orders) {
     return orders.map((order) => {
       order.price = (order.price / 100).toFixed(2);
+      order.paidAmount = (order.paidAmount / 100).toFixed(2);
       return order;
     });
   }
@@ -154,7 +155,7 @@ export default function OrdersOverview() {
                     <ListItemButton onClick={() => openEditOrder(order.externalId)} disabled={saveInProcess} dense>
                       <ListItemText primary={order.firstName + " " + order.lastName} secondary={order.mail}
                         sx={{ width: 200 }}/>
-                      <ListItemText primary={order.price + " €"} sx={{ width: 100, textAlign: 'right' }} />
+                      <ListItemText primary={order.paidAmount + " € / " + order.price + " €"} sx={{ width: 200, textAlign: 'right' }} />
                     </ListItemButton>
                   </ListItem>
               ))
