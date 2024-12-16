@@ -171,7 +171,7 @@ export default function HerbForm() {
 	}
 
 	function cleanupOrderForBackend() {
-		const orderForBackend = {...order}
+		const {price, ...orderForBackend} = order;
 		orderForBackend.herbs = orderForBackend.herbs
 		.filter(herb => herb.herbId > 0 || herb.quantity > 0)
 		.map(herb => {

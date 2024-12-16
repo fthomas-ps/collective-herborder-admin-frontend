@@ -71,12 +71,25 @@ export default function Overview() {
       }
     })
     .then(data => humps.camelizeKeys(data))
+    .then(data => data.sort(herbsSorting))
     .then(data => calculateDifferences(data))
+    .then(data => addKeys(data))
     .then(data => setStats(data))
     .then(() => setIsLoading(false))
     .catch(error => {
       console.log("Error: " + error);
       setIsLoading(false);
+    });
+  }
+
+  function herbsSorting(o1, o2) {
+    return ((o1.herbName < o2.herbName) ? -1 : (o1.herbName > o2.herbName) ? 1 : 0);
+  }
+
+  function addKeys(herbs) {
+    return herbs.map((herb, index) => {
+      herb.key = index;
+      return herb;
     });
   }
 
@@ -201,9 +214,10 @@ export default function Overview() {
           marginTop: 9,
           marginLeft: 2,
         }}>
-          isLoading ?
-          <LinearProgress/>
-          : <Box>Die angegebene Sammelbestellung wurde nicht gefunden!</Box>
+          {isLoading ?
+              <LinearProgress/>
+              : <Box>Die angegebene Sammelbestellung wurde nicht gefunden!</Box>
+          }
         </Box>
     );
   }
