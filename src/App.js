@@ -19,13 +19,16 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import UnderConstruction from "./underConstruction";
+import OrderBatchesOverview from "./orderBatchesOverview";
 import Overview from "./overview";
 import OrderUpdate from "./orderUpdate";
 import OrdersOverview from "./ordersOverview";
 import Bill from "./bill";
 import ShipmentsOverview from "./shipmentsOverview";
 import ShipmentUpdate from "./shipmentUpdate";
+import MissingHerbs from "./missingHerbs";
 import Login from "./login";
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import ViewListIcon from '@mui/icons-material/ViewList';
 import ReceiptIcon from '@mui/icons-material/Receipt';
@@ -128,6 +131,7 @@ export default function App() {
 			<Routes>
 				<Route path="/" element={<UnderConstruction/>}/>
 				<Route path="/admin" element={<Login/>}/>
+        <Route path="/admin/order_batches" element={<OrderBatchesOverview/>}/>
 				<Route path="/admin/overview" element={<Overview/>}/>
 				<Route path="/admin/orders" element={<OrdersOverview/>}/>
 				<Route path="/admin/bill" element={<Bill/>}/>
@@ -135,6 +139,7 @@ export default function App() {
 				<Route path="/admin/shipments/new" element={<ShipmentUpdate/>}/>
 				<Route path="/admin/shipments/:shipmentId" element={<ShipmentUpdate/>}/>
 				<Route path="/admin/orders/:orderId" element={<OrderUpdate/>}/>
+				<Route path="/admin/missing-herbs" element={<MissingHerbs/>}/>
 			</Routes>
 		</Router>
 
@@ -144,6 +149,14 @@ export default function App() {
 	function MenuItems() {
 		return (
 				<List>
+					<ListItem>
+						<ListItemButton href="/admin/order_batches">
+							<ListItemIcon sx={{ minWidth: '42px' }}>
+								<ContentCopyIcon/>
+							</ListItemIcon>
+							<ListItemText primary="Kräuterbestellungen"/>
+						</ListItemButton>
+					</ListItem>
 					<ListItem>
 						<ListItemButton href="/admin/overview">
 							<ListItemIcon sx={{ minWidth: '42px' }}>
@@ -174,6 +187,14 @@ export default function App() {
 								<LocalShippingIcon/>
 							</ListItemIcon>
 							<ListItemText primary="Lieferungen"/>
+						</ListItemButton>
+					</ListItem>
+					<ListItem>
+						<ListItemButton href="/admin/missing-herbs">
+							<ListItemIcon sx={{ minWidth: '42px' }}>
+								<ViewListIcon/>
+							</ListItemIcon>
+							<ListItemText primary="Fehlende Kräuter"/>
 						</ListItemButton>
 					</ListItem>
 					<ListItem>
