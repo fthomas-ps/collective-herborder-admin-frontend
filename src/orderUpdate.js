@@ -55,6 +55,7 @@ function Herb(herb, changeHerb, changeQuantity, availableHerbs, selectedHerbs, r
 export default function HerbForm() {
 
 	const {orderId} = useParams();
+	const {orderBatchId} = useParams();
 	const [cookies, setCookies] = useCookies(['herbauth']);
 
 	const [order, setOrder] = useState(orderId === undefined ? {
@@ -99,7 +100,7 @@ export default function HerbForm() {
 				Authorization: 'Basic ' + cookies.herbauth
 			}
 		}
-		return fetch(process.env.REACT_APP_BACKEND_URL + '/api/admin/orders/' + orderId,
+		return fetch(process.env.REACT_APP_BACKEND_URL + '/api/admin/order_batches/' + orderBatchId + '/orders/' + orderId,
 				requestOptions)
 		.then(response => {
 			if (response.status === 404) {
@@ -233,7 +234,7 @@ export default function HerbForm() {
 			headers: {'Content-Type': 'application/json'},
 			body: JSON.stringify(humps.decamelizeKeys(orderForBackend))
 		};
-		fetch(process.env.REACT_APP_BACKEND_URL + '/api/admin/orders', requestOptions)
+		fetch(process.env.REACT_APP_BACKEND_URL + '/api/admin/order_batches/' + orderBatchId + '/orders', requestOptions)
 		.then(response => {
 			if (response.status === 201) {
 				return response.json();
@@ -262,7 +263,7 @@ export default function HerbForm() {
 				Authorization: 'Basic ' + cookies.herbauth},
 			body: JSON.stringify(humps.decamelizeKeys(orderForBackend))
 		};
-		fetch(process.env.REACT_APP_BACKEND_URL + '/api/admin/orders/' + orderId,
+		fetch(process.env.REACT_APP_BACKEND_URL + '/api/admin/order_batches/' + order + '/orders/' + orderId,
 				requestOptions)
 		.then(response => {
 			if (response.status === 200) {
@@ -511,7 +512,7 @@ export default function HerbForm() {
 					<Box sx={{marginTop: 3, marginBottom: 3}}>
 						<Grid container>
 							<Grid size={3}>
-									<Button variant="contained" href="/admin/orders"
+									<Button variant="contained" href={"/admin/order_batches/" + orderBatchId + "/orders"}
 													disabled={saveInProcess}
 													startIcon={<ArrowBackIcon/>}>Zurück</Button>
 							</Grid>

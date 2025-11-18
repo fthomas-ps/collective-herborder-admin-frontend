@@ -96,6 +96,7 @@ export default function ShipmentUpdate() {
 
 	const {shipmentId} = useParams();
 	const [cookies, setCookies] = useCookies(['herbauth']);
+  const {orderBatchId} = useParams();
 
 	const [shipment, setShipment] = useState(shipmentId === undefined ? {
 		date: dayjs(new Date()),
@@ -137,7 +138,7 @@ export default function ShipmentUpdate() {
 				Authorization: 'Basic ' + cookies.herbauth
 			}
 		}
-		return fetch(process.env.REACT_APP_BACKEND_URL + '/api/admin/shipments/' + shipmentId,
+		return fetch(process.env.REACT_APP_BACKEND_URL + '/api/admin/order_batches/' + orderBatchId + '/shipments/' + shipmentId,
 				requestOptions)
 		.then(response => {
 			if (response.status === 404) {
@@ -236,7 +237,7 @@ export default function ShipmentUpdate() {
 			},
 			body: JSON.stringify(humps.decamelizeKeys(shipmentForBackend))
 		};
-		fetch(process.env.REACT_APP_BACKEND_URL + '/api/admin/shipments', requestOptions)
+		fetch(process.env.REACT_APP_BACKEND_URL + '/api/admin/order_batches/' + orderBatchId + '/shipments', requestOptions)
 		.then(response => {
 			if (response.status === 201) {
 				return response.json();
@@ -264,7 +265,7 @@ export default function ShipmentUpdate() {
 				Authorization: 'Basic ' + cookies.herbauth},
 			body: JSON.stringify(humps.decamelizeKeys(shipmentForBackend))
 		};
-		fetch(process.env.REACT_APP_BACKEND_URL + '/api/admin/shipments/' + shipmentId,
+		fetch(process.env.REACT_APP_BACKEND_URL + '/api/admin/order_batches/' + orderBatchId + '/shipments/' + shipmentId,
 				requestOptions)
 		.then(response => {
 			if (response.status === 200) {
@@ -427,7 +428,7 @@ export default function ShipmentUpdate() {
 					<Box sx={{marginTop: 3, marginBottom: 3}}>
 						<Grid container>
 							<Grid size={3}>
-									<Button variant="contained" href="/admin/shipments"
+									<Button variant="contained" href={"/admin/order_batches/" + orderBatchId + "/shipments"}
 													startIcon={<ArrowBackIcon/>}>Zurück</Button>
 							</Grid>
 							<Grid size={3}>

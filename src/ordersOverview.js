@@ -1,7 +1,7 @@
 import {useState} from 'react';
 import {useEffect} from 'react';
 import {Fragment} from 'react';
-import {Navigate} from "react-router-dom";
+import {Navigate, useParams} from "react-router-dom";
 import { useCookies } from 'react-cookie';
 import humps from 'humps';
 import Box from '@mui/system/Box';
@@ -25,6 +25,7 @@ export default function OrdersOverview() {
   const [cookies, setCookies] = useCookies(['herbauth']);
   const [orders, setOrders] = useState([]);
   const [placeholder, setPlaceholder] = useState((<></>));
+  const {orderBatchId} = useParams();
 
   const [isLoading, setIsLoading] = useState(true);
   const [saveInProcess, setSaveInProcess] = useState(false);
@@ -43,7 +44,7 @@ export default function OrdersOverview() {
         Authorization: 'Basic ' + cookies.herbauth
       }
     }
-    fetch(process.env.REACT_APP_BACKEND_URL + '/api/admin/orders',
+    fetch(process.env.REACT_APP_BACKEND_URL + '/api/admin/order_batches/' + orderBatchId + '/orders',
         requestOptions)
     .then(response => {
       if (response.status !== 200) {
@@ -107,7 +108,7 @@ export default function OrdersOverview() {
         Authorization: 'Basic ' + cookies.herbauth
       }
     }
-    fetch(process.env.REACT_APP_BACKEND_URL + '/api/admin/orders/price-mails',
+    fetch(process.env.REACT_APP_BACKEND_URL + '/api/admin/order_batches/' + orderBatchId + '/orders/price-mails',
         requestOptions)
     .then(response => {
       if (response.status !== 200) {

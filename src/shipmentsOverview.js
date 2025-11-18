@@ -1,6 +1,6 @@
 import {useState} from 'react';
 import {useEffect} from 'react';
-import {Navigate} from "react-router-dom";
+import {Navigate, useParams} from "react-router-dom";
 import { useCookies } from 'react-cookie';
 import humps from 'humps';
 import Box from '@mui/system/Box';
@@ -19,6 +19,7 @@ export default function ShipmentsOverview() {
   const [cookies, setCookies] = useCookies(['herbauth']);
   const [shipments, setShipments] = useState([]);
   const [placeholder, setPlaceholder] = useState((<></>));
+  const {orderBatchId} = useParams();
 
   const [isLoading, setIsLoading] = useState(true);
 
@@ -35,7 +36,7 @@ export default function ShipmentsOverview() {
         Authorization: 'Basic ' + cookies.herbauth
       }
     }
-    fetch(process.env.REACT_APP_BACKEND_URL + '/api/admin/shipments',
+    fetch(process.env.REACT_APP_BACKEND_URL + '/api/admin/order_batches/' + orderBatchId + '/shipments',
         requestOptions)
     .then(response => {
       if (response.status !== 200) {

@@ -11,16 +11,9 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import Typography from '@mui/material/Typography';
 import LinearProgress from '@mui/material/LinearProgress';
 import './styles.css';
-import {Navigate} from "react-router-dom";
-import Stack from "@mui/system/Stack";
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
-import TextField from "@mui/material/TextField";
+import {Navigate, useParams} from "react-router-dom";
 import Button from "@mui/material/Button";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
@@ -39,6 +32,7 @@ export default function Overview() {
   const [cookies, setCookies] = useCookies(['herbauth']);
   const [orderBatch, setOrderBatch] = useState(null);
   const [missingHerbs, setMissingHerbs] = useState(null);
+  const {orderBatchId} = useParams();
 
   const [isLoading, setIsLoading] = useState(true);
 
@@ -63,7 +57,7 @@ export default function Overview() {
       }
     }
     return fetch(
-        process.env.REACT_APP_BACKEND_URL + '/api/admin/order_batches/42/missing-herbs',
+        process.env.REACT_APP_BACKEND_URL + '/api/admin/order_batches/' + orderBatchId + '/missing-herbs',
         requestOptions)
     .then(response => {
       if (response.status !== 200) {
@@ -124,7 +118,7 @@ export default function Overview() {
       }
     };
     return fetch(
-        process.env.REACT_APP_BACKEND_URL + '/api/admin/order_batches/42',
+        process.env.REACT_APP_BACKEND_URL + '/api/admin/order_batches/' + orderBatchId,
         requestOptions)
     .then(response => {
       if (response.status !== 200) {
