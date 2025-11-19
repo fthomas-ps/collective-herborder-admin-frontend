@@ -57,6 +57,8 @@ export default function BillForm() {
 
 	const [bill, setBill] = useState(null);
 
+  const {orderBatchId} = useParams();
+
 	const [isLoading, setIsLoading] = useState(true);
 
 	const [saveInProcess, setSaveInProcess] = useState(false);
@@ -93,7 +95,7 @@ export default function BillForm() {
 				Authorization: 'Basic ' + cookies.herbauth
 			}
 		}
-		return fetch(process.env.REACT_APP_BACKEND_URL + '/api/admin/bills/42',
+		return fetch(process.env.REACT_APP_BACKEND_URL + '/api/admin/order_batches/' + orderBatchId + '/bill',
 				requestOptions)
 		.then(response => {
 			if (response.status === 404) {
@@ -237,7 +239,7 @@ export default function BillForm() {
 				Authorization: 'Basic ' + cookies.herbauth},
 			body: JSON.stringify(humps.decamelizeKeys(billForBackend))
 		};
-		fetch(process.env.REACT_APP_BACKEND_URL + '/api/admin/bills/42',
+		fetch(process.env.REACT_APP_BACKEND_URL + '/api/admin/order_batches/' + orderBatchId + '/bill',
 				requestOptions)
 		.then(response => {
 			if (response.status === 200) {

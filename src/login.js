@@ -68,7 +68,7 @@ export default function Login() {
 				const authString = btoa(
 						loginCredentials.username + ":" + loginCredentials.password);
 				setCookies('herbauth', authString, { path: '/admin' });
-				setMessage(<Navigate to="./orders" />);
+				setMessage(<Navigate to="./order_batches" />);
 			} else {
 				throw Error();
 			}
@@ -97,7 +97,7 @@ export default function Login() {
 
 	if (cookies.herbauth !== undefined) {
 		return (
-				<Navigate to="./orders" />
+				<Navigate to="./order_batches" />
 		);
 	}
 

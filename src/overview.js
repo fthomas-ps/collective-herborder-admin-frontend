@@ -14,7 +14,7 @@ import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import LinearProgress from '@mui/material/LinearProgress';
 import './styles.css';
-import {Navigate} from "react-router-dom";
+import {Navigate, useParams} from "react-router-dom";
 import Stack from "@mui/system/Stack";
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
@@ -37,6 +37,7 @@ export default function Overview() {
   const [cookies, setCookies] = useCookies(['herbauth']);
   const [orderBatch, setOrderBatch] = useState(null);
   const [stats, setStats] = useState(null);
+  const {orderBatchId} = useParams();
 
   const [isLoading, setIsLoading] = useState(true);
   const [saveInProcess, setSaveInProcess] = useState(false);
@@ -62,7 +63,7 @@ export default function Overview() {
       }
     }
     return fetch(
-        process.env.REACT_APP_BACKEND_URL + '/api/admin/order_batches/42/stats',
+        process.env.REACT_APP_BACKEND_URL + '/api/admin/order_batches/' + orderBatchId + '/stats',
         requestOptions)
     .then(response => {
       if (response.status !== 200) {
@@ -123,7 +124,7 @@ export default function Overview() {
       }
     }
     return fetch(
-        process.env.REACT_APP_BACKEND_URL + '/api/admin/order_batches/42',
+        process.env.REACT_APP_BACKEND_URL + '/api/admin/order_batches/' + orderBatchId,
         requestOptions)
     .then(response => {
       if (response.status !== 200) {
@@ -183,7 +184,7 @@ export default function Overview() {
         Authorization: 'Basic ' + cookies.herbauth},
       body: JSON.stringify(humps.decamelizeKeys(orderBatchForBackend))
     };
-    fetch(process.env.REACT_APP_BACKEND_URL + '/api/admin/order_batches/42',
+    fetch(process.env.REACT_APP_BACKEND_URL + '/api/admin/order_batches/' + orderBatchId,
         requestOptions)
     .then(response => {
       if (response.status === 200) {

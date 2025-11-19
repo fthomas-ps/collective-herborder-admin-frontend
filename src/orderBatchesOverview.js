@@ -99,7 +99,7 @@ export default function OrderBatchesOverview() {
   }
 
   function openOrderBatch(externalId) {
-    setPlaceholder(<Navigate to={"../orders"/* + externalId*/} />);
+    setPlaceholder(<Navigate to={"./" + externalId + "/overview"} />);
   }
 
   function onChangeName(event) {
@@ -186,7 +186,7 @@ export default function OrderBatchesOverview() {
             {
               orderBatches.map((orderBatch) => (
                   <ListItem key={orderBatch.key}>
-                    <ListItemButton onClick={() => openOrderBatch(orderBatch.externalId)} disabled={saveInProcess} dense>
+                    <ListItemButton href={"./order_batches/" + orderBatch.externalId + "/overview"} disabled={saveInProcess} dense>
                       <ListItemText primary={orderBatch.name} sx={{ width: 200 }}/>
                     </ListItemButton>
                   </ListItem>
